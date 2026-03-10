@@ -50,6 +50,28 @@ function initDatabase() {
       last_active TEXT,
       created_at TEXT DEFAULT CURRENT_TIMESTAMP
     );
+
+    CREATE TABLE IF NOT EXISTS requirements (
+      id TEXT PRIMARY KEY,
+      title TEXT NOT NULL,
+      description TEXT,
+      priority TEXT DEFAULT 'P2',
+      status TEXT DEFAULT 'pending',
+      requester TEXT,
+      evaluator TEXT,
+      evaluation_notes TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS work_logs (
+      id TEXT PRIMARY KEY,
+      agent_id TEXT NOT NULL,
+      content TEXT NOT NULL,
+      date TEXT NOT NULL,
+      source TEXT DEFAULT 'manual',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
   `);
 
   console.log('✅ 数据库初始化完成');

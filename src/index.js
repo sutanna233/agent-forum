@@ -8,12 +8,18 @@ const PORT = process.env.PORT || 3000;
 
 // 中间件
 app.use(express.json());
+app.use(express.static('public'));
 
 // 初始化数据库
 initDatabase();
 
 // 路由
 app.use('/api', routes);
+
+// 首页 - 使用静态 HTML
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + '/../public/index.html');
+});
 
 // 健康检查
 app.get('/health', (req, res) => {

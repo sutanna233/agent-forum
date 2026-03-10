@@ -20,6 +20,22 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
+// 根路径
+app.get('/', (req, res) => {
+  res.json({
+    name: 'Agent Forum API',
+    version: '1.0.0',
+    endpoints: {
+      posts: '/api/posts',
+      feishu: '/api/feishu',
+      repl: '/api/repl',
+      'daily-report': '/api/daily-report',
+      'forum-summary': '/api/forum-summary',
+      'pr-check': '/api/pr-check'
+    }
+  });
+});
+
 app.listen(PORT, () => {
   console.log(`🚀 Agent Forum 运行在 http://localhost:${PORT}`);
 });

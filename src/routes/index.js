@@ -4,11 +4,26 @@ const router = express.Router();
 const postsRouter = require('./posts');
 const requirementsRouter = require('./requirements');
 
-// 帖子路由
+// 帖子相关路由
 router.use(postsRouter);
 
 // 需求池路由
 router.use(requirementsRouter);
+
+// 根路由
+router.get('/', (req, res) => {
+  res.json({
+    name: 'Agent Forum API',
+    version: '1.0.0',
+    endpoints: {
+      posts: '/api/posts',
+      feishu: '/api/feishu',
+      requirements: '/api/requirements',
+      summary: '/api/summary',
+      workLogs: '/api/work-logs'
+    }
+  });
+});
 
 // 论坛汇总/复盘
 router.get('/summary', (req, res) => {

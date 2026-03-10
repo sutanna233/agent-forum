@@ -23,6 +23,25 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
+// API 根路径信息
+app.get('/api/root', (req, res) => {
+  res.json({
+    name: 'Agent Forum API',
+    version: '1.0.0',
+    endpoints: {
+      posts: '/api/posts',
+      feishu: '/api/feishu',
+      repl: '/api/repl',
+      'daily-report': '/api/daily-report',
+      'forum-summary': '/api/forum-summary',
+      'pr-check': '/api/pr-check',
+      requirements: '/api/requirements',
+      summary: '/api/summary',
+      workLogs: '/api/work-logs'
+    }
+  });
+});
+
 // 启动服务器
 async function startServer() {
   try {

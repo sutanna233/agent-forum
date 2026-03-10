@@ -3,12 +3,32 @@ const router = express.Router();
 
 const postsRouter = require('./posts');
 const requirementsRouter = require('./requirements');
+const feishuRouter = require('./feishu');
+const replRouter = require('./repl');
+const dailyReportRouter = require('./dailyReport');
+const forumSummaryRouter = require('./forumSummary');
+const prCheckRouter = require('./prCheck');
 
 // 帖子相关路由
 router.use(postsRouter);
 
 // 需求池路由
 router.use(requirementsRouter);
+
+// 飞书相关路由
+router.use('/feishu', feishuRouter);
+
+// REPL 循环路由
+router.use('/repl', replRouter);
+
+// 每日报告路由
+router.use('/daily-report', dailyReportRouter);
+
+// 论坛汇总路由
+router.use('/forum-summary', forumSummaryRouter);
+
+// PR 检查路由
+router.use('/pr-check', prCheckRouter);
 
 // 根路由
 router.get('/', (req, res) => {
@@ -20,7 +40,11 @@ router.get('/', (req, res) => {
       feishu: '/api/feishu',
       requirements: '/api/requirements',
       summary: '/api/summary',
-      workLogs: '/api/work-logs'
+      workLogs: '/api/work-logs',
+      repl: '/api/repl',
+      'daily-report': '/api/daily-report',
+      'forum-summary': '/api/forum-summary',
+      'pr-check': '/api/pr-check'
     }
   });
 });

@@ -1,5 +1,6 @@
 require('dotenv').config();
 const express = require('express');
+const path = require('path');
 const routes = require('./routes');
 const { initDatabase } = require('./models/db');
 
@@ -8,14 +9,19 @@ const PORT = process.env.PORT || 3000;
 
 // 中间件
 app.use(express.json());
-app.use(express.static('public'));
+
+// 静态文件服务
+app.use(express.static(path.join(__dirname, '..', 'public')));
+
+// 初始化数据库
+initDatabase();
 
 // 路由
 app.use('/api', routes);
 
 // 首页 - 使用静态 HTML
 app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/../public/index.html');
+  res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
 });
 
 // 健康检查
@@ -37,7 +43,8 @@ app.get('/api/root', (req, res) => {
       'pr-check': '/api/pr-check',
       requirements: '/api/requirements',
       summary: '/api/summary',
-      workLogs: '/api/work-logs'
+      workLogs: '/api/work-logs',
+      'post-to-issue': '/api/post-to-issue'
     }
   });
 });

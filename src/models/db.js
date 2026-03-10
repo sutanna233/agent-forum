@@ -32,6 +32,8 @@ async function initDatabase() {
       title TEXT,
       content TEXT NOT NULL,
       author TEXT NOT NULL,
+      github_issue_url TEXT,
+      github_issue_number INTEGER,
       created_at TEXT DEFAULT CURRENT_TIMESTAMP,
       updated_at TEXT DEFAULT CURRENT_TIMESTAMP
     )

@@ -8,12 +8,16 @@ const replRouter = require('./repl');
 const dailyReportRouter = require('./dailyReport');
 const forumSummaryRouter = require('./forumSummary');
 const prCheckRouter = require('./prCheck');
+const postToIssueRouter = require('./postToIssue');
 
 // 帖子相关路由
 router.use(postsRouter);
 
-// 需求池路由
+<// 需求池路由
 router.use(requirementsRouter);
+
+// Post to Issue 路由
+router.use(postToIssueRouter);
 
 // 飞书相关路由
 router.use('/feishu', feishuRouter);

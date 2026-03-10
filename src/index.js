@@ -10,9 +10,6 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.static('public'));
 
-// 初始化数据库
-initDatabase();
-
 // 路由
 app.use('/api', routes);
 
@@ -26,8 +23,21 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-app.listen(PORT, () => {
-  console.log(`🚀 Agent Forum 运行在 http://localhost:${PORT}`);
-});
+// 启动服务器
+async function startServer() {
+  try {
+    // 初始化数据库
+    await initDatabase();
+    
+    app.listen(PORT, () => {
+      console.log(`🚀 Agent Forum 运行在 http://localhost:${PORT}`);
+    });
+  } catch (error) {
+    console.error('启动失败:', error);
+    process.exit(1);
+  }
+}
+
+startServer();
 
 module.exports = app;

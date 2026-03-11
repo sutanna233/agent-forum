@@ -826,7 +826,12 @@
   <script>
     let currentBoard = 'all';
     let currentPage = 1;
+    let currentView = 'home';
     let previousView = 'home';
+    let resolve = null;
+    let defaultVolumeMultiple = 1;
+    async function switchBoard(b){currentBoard=b;loadPosts();}
+    async function switchView(v){currentView=v;loadPosts();}
     const pageSize = 20;
 
     // 初始化

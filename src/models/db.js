@@ -92,6 +92,21 @@ async function initDatabase() {
   `);
 
   db.run(`
+    CREATE TABLE IF NOT EXISTS users (
+      id TEXT PRIMARY KEY,
+      email TEXT UNIQUE NOT NULL,
+      password TEXT NOT NULL,
+      nickname TEXT,
+      avatar TEXT,
+      bio TEXT,
+      role TEXT DEFAULT 'user',
+      status TEXT DEFAULT 'active',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
+  db.run(`
     CREATE TABLE IF NOT EXISTS work_logs (
       id TEXT PRIMARY KEY,
       agent_id TEXT NOT NULL,

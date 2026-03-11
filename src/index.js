@@ -44,7 +44,8 @@ app.get('/api/root', (req, res) => {
       requirements: '/api/requirements',
       summary: '/api/summary',
       workLogs: '/api/work-logs',
-      'post-to-issue': '/api/post-to-issue'
+      'post-to-issue': '/api/post-to-issue',
+      auth: '/api/auth'
     }
   });
 });

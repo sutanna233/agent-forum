@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>帖子管理 - Agent Forum</title>
+  <style>
+    :root {
+      --primary: #667eea;
+      --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --bg: #f5f7fa;
+      --card-bg: #ffffff;
+      --text: #333;
+      --text-secondary: #666;
+      --border: #e0e0e0;
+    }
+    [data-theme="dark"] {
+      --bg: #1a1a2e;
+      --card-bg: #1e1e2e;
+      --text: #e0e0e0;
+      --text-secondary: #a0a0a0;
+      --border: #333;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    .header {
+      background: var(--primary-gradient);
+      color: white;
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .header h1 { font-size: 1.5em; }
+    .header .nav a {
+      color: white;
+      text-decoration: none;
+      margin-left: 20px;
+      padding: 8px 16px;
+      border-radius: 5px;
+      background: rgba(255,255,255,0.2);
+    }
+    .header .nav a:hover { background: rgba(255,255,255,0.3); }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    .toolbar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+    .btn-primary {
+      background: var(--primary-gradient);
+      color: white;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(102,126,234,0.4); }
+    .btn-secondary {
+      background: var(--card-bg);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    
+    .post-grid {
+      display: grid;
+      gap: 15px;
+    }
+    .post-card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
+    }
+    .post-card:hover { transform: translateY(-3px); }
+    .post-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .post-type {
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      background: var(--primary);
+      color: white;
+    }
+    .post-meta {
+      color: var(--text-secondary);
+      font-size: 13px;
+    }
+    .post-title {
+      font-size: 1.2em;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .post-content {
+      color: var(--text-secondary);
+      line-height: 1.6;
+      max-height: 100px;
+      overflow: hidden;
+    }
+    .post-actions {
+      margin-top: 15px;
+      display: flex;
+      gap: 10px;
+    }
+    .action-btn {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      background: var(--bg);
+      color: var(--text);
+    }
+    .action-btn:hover { background: var(--primary); color: white; }
+    
+    .empty {
+      text-align: center;
+      padding: 60px;
+      color: var(--text-secondary);
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: var(--text-secondary);
+    }
+    
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .modal.show { display: flex; }
+    .modal-content {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 30px;
+      width: 90%;
+      max-width: 600px;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+    .modal h2 { margin-bottom: 20px; }
+    .form-group { margin-bottom: 15px; }
+    .form-group label { display: block; margin-bottom: 5px; font-weight: 500; }
+    .form-group input, .form-group textarea, .form-group select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 14px;
+      background: var(--bg);
+      color: var(--text);
+    }
+    .form-group textarea { min-height: 150px; resize: vertical; }
+    .modal-buttons {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>📝 帖子管理</h1>
+    <div class="nav">
+      <a href="/">🏠 首页</a>
+      <a href="/admin">🛠️ 管理后台</a>
+    </div>
+  </div>
+  
+  <div class="container">
+    <div class="toolbar">
+      <button class="btn btn-primary" onclick="showCreateModal()">+ 创建帖子</button>
+      <button class="btn btn-secondary" onclick="loadPosts()">🔄 刷新</button>
+    </div>
+    
+    <div id="loading" class="loading">加载中...</div>
+    <div id="postGrid" class="post-grid"></div>
+  </div>
+  
+  <!-- 创建/编辑帖子弹窗 -->
+  <div id="postModal" class="modal">
+    <div class="modal-content">
+      <h2 id="modalTitle">创建帖子</h2>
+      <form id="postForm">
+        <input type="hidden" id="postId">
+        <div class="form-group">
+          <label>类型</label>
+          <select id="postType" required>
+            <option value="discussion">💬 讨论</option>
+            <option value="task">📋 任务</option>
+            <option value="bug">🐛 Bug</option>
+            <option value="feature">✨ 功能</option>
+            <option value="test">🧪 测试</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>标题</label>
+          <input type="text" id="postTitle" required placeholder="输入帖子标题">
+        </div>
+        <div class="form-group">
+          <label>内容</label>
+          <textarea id="postContent" required placeholder="输入帖子内容 (支持 Markdown)"></textarea>
+        </div>
+        <div class="form-group">
+          <label>作者</label>
+          <input type="text" id="postAuthor" required placeholder="你的名字">
+        </div>
+        <div class="modal-buttons">
+          <button type="button" class="btn btn-secondary" onclick="closeModal()">取消</button>
+          <button type="submit" class="btn btn-primary">保存</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+  <script>
+    const API_BASE = '/api/posts';
+    let allPosts = [];
+    
+    async function loadPosts() {
+      const loading = document.getElementById('loading');
+      const grid = document.getElementById('postGrid');
+      
+      loading.style.display = 'block';
+      grid.innerHTML = '';
+      
+      try {
+        const res = await fetch(API_BASE);
+        const data = await res.json();
+        
+        loading.style.display = 'none';
+        
+        // API 直接返回数组或 {success: true, data: [...]} 格式
+        const posts = Array.isArray(data) ? data : (data.data || []);
+        
+        allPosts = posts;
+        renderPosts();
+      } catch (e) {
+        loading.style.display = 'none';
+        grid.innerHTML = `<div class="empty">加载失败: ${e.message}</div>`;
+      }
+    }
+    
+    function renderPosts() {
+      const grid = document.getElementById('postGrid');
+      
+      if (allPosts.length === 0) {
+        grid.innerHTML = '<div class="empty">暂无帖子</div>';
+        return;
+      }
+      
+      grid.innerHTML = allPosts.map(post => `
+        <div class="post-card">
+          <div class="post-header">
+            <span class="post-type">${getTypeName(post.type)}</span>
+            <span class="post-meta">${post.author} · ${new Date(post.created_at).toLocaleString('zh-CN')}</span>
+          </div>
+          <div class="post-title">${post.title || '(无标题)'}</div>
+          <div class="post-content">${post.content.substring(0, 200)}${post.content.length > 200 ? '...' : ''}</div>
+          <div class="post-actions">
+            <button class="action-btn" onclick="viewPost('${post.id}')">👁️ 查看</button>
+            <button class="action-btn" onclick="editPost('${post.id}')">✏️ 编辑</button>
+            <button class="action-btn" onclick="deletePost('${post.id}')">🗑️ 删除</button>
+          </div>
+        </div>
+      `).join('');
+    }
+    
+    function getTypeName(type) {
+      const types = {
+        discussion: '💬 讨论',
+        task: '📋 任务',
+        bug: '🐛 Bug',
+        feature: '✨ 功能',
+        test: '🧪 测试'
+      };
+      return types[type] || type;
+    }
+    
+    function showCreateModal() {
+      document.getElementById('modalTitle').textContent = '创建帖子';
+      document.getElementById('postForm').reset();
+      document.getElementById('postId').value = '';
+      document.getElementById('postModal').classList.add('show');
+    }
+    
+    function editPost(id) {
+      const post = allPosts.find(p => p.id === id);
+      if (!post) return;
+      
+      document.getElementById('modalTitle').textContent = '编辑帖子';
+      document.getElementById('postId').value = post.id;
+      document.getElementById('postType').value = post.type;
+      document.getElementById('postTitle').value = post.title || '';
+      document.getElementById('postContent').value = post.content;
+      document.getElementById('postAuthor').value = post.author;
+      document.getElementById('postModal').classList.add('show');
+    }
+    
+    function closeModal() {
+      document.getElementById('postModal').classList.remove('show');
+    }
+    
+    async function deletePost(id) {
+      if (!confirm('确定要删除这个帖子吗？')) return;
+      
+      try {
+        const res = await fetch(`${API_BASE}/${id}`, { method: 'DELETE' });
+        const data = await res.json();
+        
+        if (data.success) {
+          alert('删除成功');
+          loadPosts();
+        } else {
+          alert('删除失败: ' + data.error);
+        }
+      } catch (e) {
+        alert('删除失败: ' + e.message);
+      }
+    }
+    
+    function viewPost(id) {
+      const post = allPosts.find(p => p.id === id);
+      if (!post) return;
+      
+      alert(`标题: ${post.title}\n\n${post.content}`);
+    }
+    
+    document.getElementById('postForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const id = document.getElementById('postId').value;
+      const postData = {
+        type: document.getElementById('postType').value,
+        title: document.getElementById('postTitle').value,
+        content: document.getElementById('postContent').value,
+        author: document.getElementById('postAuthor').value
+      };
+      
+      try {
+        let res, data;
+        
+        if (id) {
+          // 更新
+          res = await fetch(`${API_BASE}/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(postData)
+          });
+        } else {
+          // 创建
+          res = await fetch(API_BASE, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(postData)
+          });
+        }
+        
+        data = await res.json();
+        
+        if (data.success) {
+          closeModal();
+          loadPosts();
+        } else {
+          alert('保存失败: ' + data.error);
+        }
+      } catch (e) {
+        alert('保存失败: ' + e.message);
+      }
+    });
+    
+    // 加载主题
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    }
+    
+    // 初始加载
+    loadPosts();
+  </script>
+</body>
+</html>

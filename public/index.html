@@ -532,6 +532,115 @@
       background: var(--hover-bg);
     }
 
+    /* 投票功能 */
+    .vote-section {
+      margin-top: 15px;
+      padding: 15px;
+      background: var(--header-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 5px;
+    }
+
+    .vote-title {
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: var(--text-primary);
+    }
+
+    .vote-options {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .vote-option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      background: var(--board-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 3px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .vote-option:hover {
+      border-color: var(--primary-color);
+      background: var(--hover-bg);
+    }
+
+    .vote-option.selected {
+      border-color: var(--primary-color);
+      background: var(--highlight-bg);
+    }
+
+    .vote-radio {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--primary-color);
+    }
+
+    .vote-option-text {
+      flex: 1;
+    }
+
+    .vote-count {
+      color: var(--text-secondary);
+      font-size: 12px;
+    }
+
+    .vote-submit {
+      margin-top: 10px;
+      padding: 8px 20px;
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 3px;
+    }
+
+    .vote-submit:hover {
+      background: var(--primary-dark);
+    }
+
+    .vote-result {
+      margin-top: 10px;
+    }
+
+    .vote-result-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .vote-result-label {
+      width: 100px;
+      font-size: 13px;
+    }
+
+    .vote-result-track {
+      flex: 1;
+      height: 20px;
+      background: var(--border-color);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .vote-result-fill {
+      height: 100%;
+      background: var(--primary-color);
+      transition: width 0.3s;
+    }
+
+    .vote-result-percent {
+      width: 50px;
+      text-align: right;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
     /* 统计信息 */
     .stats-bar {
       background: var(--board-bg);
@@ -919,6 +1028,9 @@
           </div>
         `;
         
+        // 添加投票区域
+        html += renderVoteSection(post);
+        
         // 楼层
         const comments = post.comments || [];
         comments.forEach((comment, index) => {
@@ -1064,6 +1176,118 @@
     function escapeHtml(text) {
       if (!text) return '';
       return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    // 投票功能
+    let currentVote = {};
+
+    // 渲染投票区域
+    function renderVoteSection(post) {
+      if (!post.vote || !post.vote.enabled) {
+        return '';
+      }
+      
+      const voted = post.vote.voted || [];
+      const totalVotes = post.vote.votes ? Object.values(post.vote.votes).reduce((a, b) => a + b, 0) : 0;
+      const userVoted = currentVote[post.id];
+      
+      let html = '<div class="vote-section">';
+      html += '<div class="vote-title">📊 ' + escapeHtml(post.vote.question || '请投票') + '</div>';
+      
+      if (voted.includes('苏丹娜') || userVoted !== undefined) {
+        // 显示投票结果
+        html += '<div class="vote-result">';
+        post.vote.options.forEach((option, index) => {
+          const votes = post.vote.votes ? (post.vote.votes[index] || 0) : 0;
+          const percent = totalVotes > 0 ? Math.round((votes / totalVotes) * 100) : 0;
+          const isUserVoted = userVoted === index;
+          html += `
+            <div class="vote-result-bar">
+              <span class="vote-result-label">${isUserVoted ? '✓ ' : ''}${escapeHtml(option)}</span>
+              <div class="vote-result-track">
+                <div class="vote-result-fill" style="width: ${percent}%"></div>
+              </div>
+              <span class="vote-result-percent">${percent}% (${votes})</span>
+            </div>
+          `;
+        });
+        html += '</div>';
+        html += `<div style="margin-top:10px;font-size:12px;color:var(--text-secondary);">总投票数: ${totalVotes}</div>`;
+      } else {
+        // 显示投票选项
+        html += '<div class="vote-options">';
+        post.vote.options.forEach((option, index) => {
+          html += `
+            <label class="vote-option" onclick="selectVote(${index})">
+              <input type="radio" name="vote-${post.id}" class="vote-radio" value="${index}">
+              <span class="vote-option-text">${escapeHtml(option)}</span>
+            </label>
+          `;
+        });
+        html += '</div>';
+        html += `<button class="vote-submit" onclick="submitVote('${post.id}')">提交投票</button>`;
+      }
+      
+      html += '</div>';
+      return html;
+    }
+
+    // 选择投票选项
+    function selectVote(index) {
+      document.querySelectorAll('.vote-option').forEach((opt, i) => {
+        opt.classList.toggle('selected', i === index);
+      });
+    }
+
+    // 提交投票
+    async function submitVote(postId) {
+      const selected = document.querySelector('input[name="vote-' + postId + '"]:checked');
+      if (!selected) {
+        alert('请选择一个选项');
+        return;
+      }
+      
+      const optionIndex = parseInt(selected.value);
+      currentVote[postId] = optionIndex;
+      
+      try {
+        const response = await fetch('/api/posts/' + postId + '/vote', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({option: optionIndex, voter: '苏丹娜'})
+        });
+        
+        if (response.ok) {
+          viewPost(postId);
+        } else {
+          alert('投票失败');
+        }
+      } catch (error) {
+        console.error(error);
+        alert('投票失败');
+      }
+    }
+
+    // 删除帖子
+    async function deletePost(postId) {
+      if (!confirm('确定要删除这个帖子吗？')) return;
+      
+      try {
+        await fetch('/api/posts/' + postId, {
+          method: 'DELETE'
+        });
+        goHome();
+      } catch (error) {
+        alert('删除失败');
+      }
+    }
+
+    // 编辑帖子
+    function editPost(post) {
+      document.getElementById('post-board').value = post.type || post.board || 'tech';
+      document.getElementById('post-title').value = post.title || '';
+      document.getElementById('post-content').value = post.content || '';
+      switchView('create-post');
     }
   </script>
 </body>

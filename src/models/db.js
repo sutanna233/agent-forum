@@ -34,6 +34,10 @@ async function initDatabase() {
       author TEXT NOT NULL,
       github_issue_url TEXT,
       github_issue_number INTEGER,
+      vote_enabled INTEGER DEFAULT 0,
+      vote_question TEXT,
+      vote_options TEXT,
+      views INTEGER DEFAULT 0,
       created_at TEXT DEFAULT CURRENT_TIMESTAMP,
       updated_at TEXT DEFAULT CURRENT_TIMESTAMP
     )

@@ -995,7 +995,7 @@
           container.innerHTML = pagePosts.map(post => `
             <tr>
               <td>
-                <a class="post-title" onclick="viewPost('${post.id}')">${escapeHtml(post.title || '无标题')}</a>
+                <a class="post-title" data-id="${post.id}" href="javascript:void(0)">${escapeHtml(post.title || '无标题')}</a>
               </td>
               <td><span class="post-author">${escapeHtml(post.author)}</span></td>
               <td class="post-stats">${post.comments?.length || 0}</td>
@@ -1003,6 +1003,15 @@
               <td class="post-time">${formatTime(post.created_at)}</td>
             </tr>
           `).join('');
+          
+          // 绑定点击事件
+          container.querySelectorAll('.post-title').forEach(link => {
+            link.addEventListener('click', function(e) {
+              e.preventDefault();
+              const id = this.getAttribute('data-id');
+              viewPost(id);
+            });
+          });
         }
         
         // 生成分页
@@ -1049,10 +1058,19 @@
     // 查看帖子详情
     async function viewPost(id) {
       previousView = 'home';
+      console.log('viewPost called with id:', id);
       
       try {
         const response = await fetch('/api/posts/' + id);
+        
+        if (!response.ok) {
+          const error = await response.json();
+          alert(error.error || '加载失败');
+          return;
+        }
+        
         const post = await response.json();
+        console.log('Post loaded:', post);
         
         const container = document.getElementById('post-detail-content');
         

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const postsRouter = require('./posts');
+const usersRouter = require('./users');
 const requirementsRouter = require('./requirements');
 const feishuRouter = require('./feishu');
 const replRouter = require('./repl');
@@ -12,6 +13,9 @@ const postToIssueRouter = require('./postToIssue');
 
 // 帖子相关路由
 router.use(postsRouter);
+
+// 用户相关路由
+router.use(usersRouter);
 
 <// 需求池路由
 router.use(requirementsRouter);

@@ -770,6 +770,187 @@
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
     }
+
+    /* 登录/注册样式 */
+    .auth-container {
+      max-width: 400px;
+      margin: 80px auto 20px;
+      background: var(--board-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 30px;
+    }
+
+    .auth-tabs {
+      display: flex;
+      margin-bottom: 25px;
+      border-bottom: 2px solid var(--border-color);
+    }
+
+    .auth-tab {
+      flex: 1;
+      padding: 12px;
+      background: none;
+      border: none;
+      font-size: 16px;
+      cursor: pointer;
+      color: var(--text-secondary);
+      transition: all 0.2s;
+    }
+
+    .auth-tab.active {
+      color: var(--primary-color);
+      border-bottom: 2px solid var(--primary-color);
+      margin-bottom: -2px;
+      font-weight: bold;
+    }
+
+    .auth-form .form-group {
+      margin-bottom: 20px;
+    }
+
+    .auth-form label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+      color: var(--text-primary);
+    }
+
+    .auth-form input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      background: var(--board-bg);
+      color: var(--text-primary);
+      font-size: 14px;
+    }
+
+    .auth-form input:focus {
+      outline: none;
+      border-color: var(--primary-color);
+    }
+
+    /* 个人资料样式 */
+    .profile-container {
+      max-width: 600px;
+      margin: 80px auto 20px;
+      background: var(--board-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 30px;
+    }
+
+    .profile-header {
+      display: flex;
+      align-items: center;
+      gap: 25px;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .profile-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: var(--primary-color);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      font-weight: bold;
+    }
+
+    .profile-info h2 {
+      margin-bottom: 8px;
+      color: var(--text-primary);
+    }
+
+    .profile-info p {
+      color: var(--text-secondary);
+      font-size: 14px;
+      margin: 4px 0;
+    }
+
+    .profile-stats {
+      display: flex;
+      gap: 40px;
+      margin-bottom: 30px;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-value {
+      display: block;
+      font-size: 28px;
+      font-weight: bold;
+      color: var(--primary-color);
+    }
+
+    .stat-label {
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+
+    .profile-actions {
+      text-align: center;
+    }
+
+    .profile-actions button {
+      padding: 10px 30px;
+      background: #e74c3c;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .profile-actions button:hover {
+      background: #c0392b;
+    }
+
+    /* 登录按钮 */
+    .login-btn {
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 6px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .login-btn:hover {
+      background: var(--primary-dark);
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .user-avatar-small {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--primary-color);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+
+    .user-name {
+      color: var(--text-primary);
+      font-weight: 500;
+    }
   </style>
 </head>
 <body>
@@ -787,6 +968,7 @@
     </div>
     <div class="top-nav-right">
       <button class="theme-btn" onclick="toggleTheme()">🌙</button>
+      <span id="auth-area"></span>
     </div>
   </nav>
 
@@ -873,6 +1055,79 @@
         </div>
       </div>
     </div>
+
+    <!-- 登录视图 -->
+    <div id="auth-view" style="display:none;">
+      <div class="auth-container">
+        <div class="auth-tabs">
+          <button class="auth-tab active" onclick="showAuthTab('login')">登录</button>
+          <button class="auth-tab" onclick="showAuthTab('register')">注册</button>
+        </div>
+        
+        <!-- 登录表单 -->
+        <div id="login-form" class="auth-form">
+          <div class="form-group">
+            <label>邮箱</label>
+            <input type="email" id="login-email" placeholder="请输入邮箱" required>
+          </div>
+          <div class="form-group">
+            <label>密码</label>
+            <input type="password" id="login-password" placeholder="请输入密码" required>
+          </div>
+          <div class="form-actions">
+            <button class="form-submit" onclick="doLogin()">登录</button>
+            <button class="form-cancel" onclick="goBack()">取消</button>
+          </div>
+        </div>
+        
+        <!-- 注册表单 -->
+        <div id="register-form" class="auth-form" style="display:none;">
+          <div class="form-group">
+            <label>邮箱</label>
+            <input type="email" id="register-email" placeholder="请输入邮箱" required>
+          </div>
+          <div class="form-group">
+            <label>密码</label>
+            <input type="password" id="register-password" placeholder="请输入密码 (至少6位)" required>
+          </div>
+          <div class="form-group">
+            <label>确认密码</label>
+            <input type="password" id="register-confirm" placeholder="请再次输入密码" required>
+          </div>
+          <div class="form-actions">
+            <button class="form-submit" onclick="doRegister()">注册</button>
+            <button class="form-cancel" onclick="goBack()">取消</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 个人资料视图 -->
+    <div id="profile-view" style="display:none;">
+      <div class="profile-container">
+        <div class="profile-header">
+          <div class="profile-avatar" id="profile-avatar">?</div>
+          <div class="profile-info">
+            <h2 id="profile-name">用户</h2>
+            <p id="profile-email">email@example.com</p>
+            <p id="profile-joined">注册时间: -</p>
+          </div>
+        </div>
+        <div class="profile-stats">
+          <div class="stat-item">
+            <span class="stat-value" id="profile-post-count">0</span>
+            <span class="stat-label">帖子</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value" id="profile-comment-count">0</span>
+            <span class="stat-label">回复</span>
+          </div>
+        </div>
+        <div class="profile-actions">
+          <button class="form-submit" onclick="logout()">退出登录</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- 底部 -->
@@ -885,7 +1140,9 @@
     let currentBoard = 'all';
     let currentPage = 1;
     let previousView = 'home';
+    let currentView = 'home';
     const pageSize = 20;
+    let currentUser = null;
 
     // 初始化
     document.addEventListener('DOMContentLoaded', () => {
@@ -897,7 +1154,233 @@
         document.documentElement.setAttribute('data-theme', 'dark');
         document.querySelector('.theme-btn').textContent = '☀️';
       }
+      
+      // 检查登录状态
+      checkAuth();
     });
+
+    // 检查登录状态
+    async function checkAuth() {
+      const token = localStorage.getItem('auth_token');
+      const userJson = localStorage.getItem('user');
+      
+      if (token && userJson) {
+        try {
+          const user = JSON.parse(userJson);
+          const response = await fetch('/api/auth/me', {
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+          
+          if (response.ok) {
+            currentUser = await response.json();
+            updateAuthUI(true);
+          } else {
+            // token 失效，清除
+            localStorage.removeItem('auth_token');
+            localStorage.removeItem('user');
+            updateAuthUI(false);
+          }
+        } catch (e) {
+          console.error('Auth check failed:', e);
+          updateAuthUI(false);
+        }
+      } else {
+        updateAuthUI(false);
+      }
+    }
+
+    // 更新登录 UI
+    function updateAuthUI(isLoggedIn) {
+      const authArea = document.getElementById('auth-area');
+      
+      if (isLoggedIn && currentUser) {
+        const initial = currentUser.email ? currentUser.email.charAt(0).toUpperCase() : '?';
+        authArea.innerHTML = `
+          <div class="user-info" onclick="showProfile()" style="cursor:pointer;">
+            <div class="user-avatar-small">${initial}</div>
+            <span class="user-name">${escapeHtml(currentUser.email.split('@')[0])}</span>
+          </div>
+        `;
+      } else {
+        authArea.innerHTML = `<button class="login-btn" onclick="showAuth()">登录 / 注册</button>`;
+      }
+    }
+
+    // 显示登录/注册视图
+    function showAuth() {
+      previousView = currentView;
+      currentView = 'auth';
+      
+      document.getElementById('home-view').style.display = 'none';
+      document.getElementById('post-detail-view').style.display = 'none';
+      document.getElementById('create-post-view').style.display = 'none';
+      document.getElementById('auth-view').style.display = 'block';
+      document.getElementById('profile-view').style.display = 'none';
+      
+      showAuthTab('login');
+      
+      document.querySelectorAll('.top-nav-link').forEach(link => link.classList.remove('active'));
+    }
+
+    // 切换登录/注册标签
+    function showAuthTab(tab) {
+      document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+      event.target.classList.add('active');
+      
+      if (tab === 'login') {
+        document.getElementById('login-form').style.display = 'block';
+        document.getElementById('register-form').style.display = 'none';
+      } else {
+        document.getElementById('login-form').style.display = 'none';
+        document.getElementById('register-form').style.display = 'block';
+      }
+    }
+
+    // 执行登录
+    async function doLogin() {
+      const email = document.getElementById('login-email').value.trim();
+      const password = document.getElementById('login-password').value;
+      
+      if (!email || !password) {
+        alert('请填写邮箱和密码');
+        return;
+      }
+      
+      try {
+        const response = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+          localStorage.setItem('auth_token', data.token);
+          localStorage.setItem('user', JSON.stringify(data.user));
+          currentUser = data.user;
+          updateAuthUI(true);
+          goBack();
+          alert('登录成功！');
+        } else {
+          alert(data.error || '登录失败');
+        }
+      } catch (e) {
+        console.error(e);
+        alert('登录失败，请稍后重试');
+      }
+    }
+
+    // 执行注册
+    async function doRegister() {
+      const email = document.getElementById('register-email').value.trim();
+      const password = document.getElementById('register-password').value;
+      const confirm = document.getElementById('register-confirm').value;
+      
+      if (!email || !password || !confirm) {
+        alert('请填写所有字段');
+        return;
+      }
+      
+      if (password.length < 6) {
+        alert('密码至少需要6位');
+        return;
+      }
+      
+      if (password !== confirm) {
+        alert('两次输入的密码不一致');
+        return;
+      }
+      
+      try {
+        const response = await fetch('/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+          localStorage.setItem('auth_token', data.token);
+          localStorage.setItem('user', JSON.stringify(data.user));
+          currentUser = data.user;
+          updateAuthUI(true);
+          goBack();
+          alert('注册成功！');
+        } else {
+          alert(data.error || '注册失败');
+        }
+      } catch (e) {
+        console.error(e);
+        alert('注册失败，请稍后重试');
+      }
+    }
+
+    // 显示个人资料
+    async function showProfile() {
+      if (!currentUser) {
+        showAuth();
+        return;
+      }
+      
+      previousView = currentView;
+      currentView = 'profile';
+      
+      document.getElementById('home-view').style.display = 'none';
+      document.getElementById('post-detail-view').style.display = 'none';
+      document.getElementById('create-post-view').style.display = 'none';
+      document.getElementById('auth-view').style.display = 'none';
+      document.getElementById('profile-view').style.display = 'block';
+      
+      // 更新资料内容
+      const initial = currentUser.email ? currentUser.email.charAt(0).toUpperCase() : '?';
+      document.getElementById('profile-avatar').textContent = initial;
+      document.getElementById('profile-name').textContent = currentUser.email.split('@')[0];
+      document.getElementById('profile-email').textContent = currentUser.email;
+      document.getElementById('profile-joined').textContent = '注册时间: ' + (currentUser.created_at ? new Date(currentUser.created_at).toLocaleDateString('zh-CN') : '未知');
+      
+      // 加载用户的帖子统计
+      try {
+        const token = localStorage.getItem('auth_token');
+        const response = await fetch('/api/posts');
+        const posts = await response.json();
+        const userPosts = posts.filter(p => p.author === currentUser.email);
+        
+        document.getElementById('profile-post-count').textContent = userPosts.length;
+        
+        // 计算回复数
+        let commentCount = 0;
+        for (const post of userPosts) {
+          commentCount += (post.comments?.length || 0);
+        }
+        document.getElementById('profile-comment-count').textContent = commentCount;
+      } catch (e) {
+        console.error(e);
+      }
+      
+      document.querySelectorAll('.top-nav-link').forEach(link => link.classList.remove('active'));
+    }
+
+    // 退出登录
+    function logout() {
+      localStorage.removeItem('auth_token');
+      localStorage.removeItem('user');
+      currentUser = null;
+      updateAuthUI(false);
+      goHome();
+      alert('已退出登录');
+    }
+
+    // 获取当前用户信息
+    function getCurrentUser() {
+      return currentUser;
+    }
+
+    // 检查是否已登录
+    function isLoggedIn() {
+      return !!currentUser;
+    }
 
     // 切换视图
     function switchView(view) {
@@ -907,6 +1390,8 @@
       document.getElementById('home-view').style.display = view === 'home' ? 'block' : 'none';
       document.getElementById('post-detail-view').style.display = view === 'post-detail' ? 'block' : 'none';
       document.getElementById('create-post-view').style.display = view === 'create-post' ? 'block' : 'none';
+      document.getElementById('auth-view').style.display = view === 'auth' ? 'block' : 'none';
+      document.getElementById('profile-view').style.display = view === 'profile' ? 'block' : 'none';
       
       document.querySelectorAll('.top-nav-link').forEach(link => {
         link.classList.remove('active');
@@ -939,6 +1424,8 @@
     function goBack() {
       if (previousView === 'post-detail') {
         loadPosts();
+        switchView('home');
+      } else if (previousView === 'auth' || previousView === 'profile') {
         switchView('home');
       } else {
         switchView(previousView || 'home');
@@ -1210,6 +1697,13 @@
 
     // 创建帖子
     async function createPost() {
+      // 检查登录状态
+      if (!currentUser) {
+        alert('请先登录');
+        showAuth();
+        return;
+      }
+      
       const board = document.getElementById('post-board').value;
       const title = document.getElementById('post-title').value.trim();
       const content = document.getElementById('post-content').value.trim();
@@ -1220,10 +1714,14 @@
       }
       
       try {
+        const token = localStorage.getItem('auth_token');
         await fetch('/api/posts', {
           method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({type: board, title, content, author: '苏丹娜'})
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': token ? `Bearer ${token}` : ''
+          },
+          body: JSON.stringify({type: board, title, content, author: currentUser.email})
         });
         document.getElementById('post-title').value = '';
         document.getElementById('post-content').value = '';

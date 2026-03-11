@@ -239,6 +239,35 @@
       width: 15%;
     }
 
+    .post-table .col-actions {
+      width: 10%;
+      text-align: center;
+    }
+
+    .post-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+    }
+
+    .action-btn {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      padding: 4px 8px;
+      border-radius: 4px;
+      transition: background 0.2s;
+    }
+
+    .action-btn:hover {
+      background: var(--hover-bg);
+    }
+
+    .action-btn.delete:hover {
+      background: #fee;
+    }
+
     .post-title {
       color: var(--link-color);
       text-decoration: none;
@@ -712,7 +741,22 @@
       padding: 60px 20px;
       color: var(--text-secondary);
     }
-  </style>
+  
+  /* Auth Modal */
+  .auth-modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center; }
+  .auth-modal-overlay.active { display: flex; }
+  .auth-modal { background: var(--board-bg); border-radius: 12px; padding: 32px; width: 360px; box-shadow: 0 8px 32px rgba(0,0,0,0.2); }
+  .auth-modal h2 { margin: 0 0 24px; text-align: center; color: var(--text-primary); }
+  .auth-modal input { width: 100%; padding: 12px; margin-bottom: 16px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-color); color: var(--text-primary); box-sizing: border-box; }
+  .auth-modal button { width: 100%; padding: 12px; background: var(--primary-color); color: #fff; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; }
+  .auth-modal .auth-toggle { text-align: center; margin-top: 16px; }
+  .auth-modal .auth-toggle a { color: var(--link-color); cursor: pointer; }
+  .auth-close { position: absolute; right: 16px; top: 16px; font-size: 24px; cursor: pointer; color: var(--text-secondary); }
+  /* Auth button in nav */
+  .nav-auth-btn { background: transparent; border: 1px solid var(--border-color); color: var(--text-primary); padding: 6px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; }
+  .nav-auth-btn:hover { background: var(--hover-bg); }
+
+</style>
 </head>
 <body>
   <!-- 顶部固定导航 -->
@@ -729,6 +773,9 @@
     </div>
     <div class="top-nav-right">
       <button class="theme-btn" onclick="toggleTheme()">🌙</button>
+      <span id="navUser"></span>
+      <button class="nav-auth-btn" id="navLoginBtn" onclick="showAuthModal()">登录</button>
+      <button class="nav-auth-btn" id="navLogoutBtn" onclick="logout()" style="display:none;">登出</button>
     </div>
   </nav>
 
@@ -761,6 +808,7 @@
               <th class="col-replies">回复</th>
               <th class="col-views">查看</th>
               <th class="col-time">发布时间</th>
+              <th class="col-actions">操作</th>
             </tr>
           </thead>
           <tbody id="posts-list">
@@ -937,8 +985,9 @@
         const pagePosts = filteredPosts.slice(start, end);
         
         if (pagePosts.length === 0) {
-          container.innerHTML = '<tr><td colspan="5" class="empty">暂无帖子</td></tr>';
+          container.innerHTML = '<tr><td colspan="6" class="empty">暂无帖子</td></tr>';
         } else {
+          const currentUser = localStorage.getItem('username') || '';
           container.innerHTML = pagePosts.map(post => `
             <tr>
               <td>
@@ -948,6 +997,12 @@
               <td class="post-stats">${post.comments?.length || 0}</td>
               <td class="post-stats">${post.views || 0}</td>
               <td class="post-time">${formatTime(post.created_at)}</td>
+              <td class="post-actions">
+                ${post.author === currentUser || currentUser === 'admin' ? `
+                  <button class="action-btn edit" onclick="editPost('${post.id}')" title="编辑">✏️</button>
+                  <button class="action-btn delete" onclick="deletePost('${post.id}')" title="删除">🗑️</button>
+                ` : ''}
+              </td>
             </tr>
           `).join('');
         }
@@ -1094,7 +1149,7 @@
         await fetch('/api/posts/' + postId + '/comments', {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({content, author: '苏丹娜'})
+          body: JSON.stringify({content, author: (JSON.parse(localStorage.getItem('user')||'{}').nickname||'匿名')})
         });
         document.getElementById('reply-content').value = '';
         viewPost(postId);
@@ -1121,7 +1176,7 @@
             type: currentBoard === 'all' ? 'tech' : currentBoard,
             title,
             content,
-            author: '苏丹娜'
+            author: (JSON.parse(localStorage.getItem('user')||'{}').nickname||'匿名')
           })
         });
         document.getElementById('quick-title').value = '';
@@ -1137,7 +1192,7 @@
       switchView('create-post');
     }
 
-    // 创建帖子
+    // 创建/编辑帖子
     async function createPost() {
       const board = document.getElementById('post-board').value;
       const title = document.getElementById('post-title').value.trim();
@@ -1148,18 +1203,31 @@
         return;
       }
       
+      const author = JSON.parse(localStorage.getItem('user')||'{}').nickname || '匿名';
+      
       try {
-        await fetch('/api/posts', {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({type: board, title, content, author: '苏丹娜'})
-        });
+        if (window.editingPostId) {
+          // 编辑模式
+          await fetch('/api/posts/' + window.editingPostId, {
+            method: 'PUT',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({type: board, title, content, author})
+          });
+          window.editingPostId = null;
+        } else {
+          // 创建模式
+          await fetch('/api/posts', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({type: board, title, content, author})
+          });
+        }
         document.getElementById('post-title').value = '';
         document.getElementById('post-content').value = '';
         loadPosts();
         switchView('home');
       } catch (error) {
-        alert('发布失败');
+        alert('操作失败');
       }
     }
 
@@ -1288,12 +1356,87 @@
     }
 
     // 编辑帖子
-    function editPost(post) {
-      document.getElementById('post-board').value = post.type || post.board || 'tech';
-      document.getElementById('post-title').value = post.title || '';
-      document.getElementById('post-content').value = post.content || '';
-      switchView('create-post');
+    async function editPost(postId) {
+      try {
+        const response = await fetch('/api/posts/' + postId);
+        const post = await response.json();
+        document.getElementById('post-board').value = post.type || post.board || 'tech';
+        document.getElementById('post-title').value = post.title || '';
+        document.getElementById('post-content').value = post.content || '';
+        // 保存要编辑的帖子ID
+        window.editingPostId = postId;
+        switchView('create-post');
+      } catch (error) {
+        alert('获取帖子失败');
+      }
     }
-  </script>
+  
+    // Auth
+    let isLoginMode = true;
+    function showAuthModal() { document.getElementById('authModal').classList.add('active'); }
+    function closeAuthModal(e) { if(e&&e.target!==e.currentTarget)return; document.getElementById('authModal').classList.remove('active'); }
+    function toggleAuthMode() { 
+      isLoginMode = !isLoginMode; 
+      document.getElementById('authTitle').textContent = isLoginMode ? '登录' : '注册'; 
+      document.getElementById('authNickname').style.display = isLoginMode ? 'none' : 'block'; 
+      document.getElementById('authBtn').textContent = isLoginMode ? '登录' : '注册';
+      document.querySelector('.auth-toggle').innerHTML = isLoginMode ? '<a onclick="toggleAuthMode()">没有账号？点击注册</a>' : '<a onclick="toggleAuthMode()">已有账号？点击登录</a>';
+    }
+    async function doAuth() {
+      const email = document.getElementById('authEmail').value;
+      const password = document.getElementById('authPassword').value;
+      const nickname = document.getElementById('authNickname').value;
+      if(!email||!password) { alert('请填写完整'); return; }
+      const endpoint = isLoginMode ? '/api/auth/login' : '/api/auth/register';
+      const body = isLoginMode ? {email, password} : {email, password, nickname};
+      const res = await fetch(endpoint, {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body)});
+      const data = await res.json();
+      if(data.token) { 
+        localStorage.setItem('token', data.token); 
+        localStorage.setItem('user', JSON.stringify(data.user)); 
+        closeAuthModal();
+        alert('登录成功！');
+        location.reload();
+      } else { 
+        alert(data.error || '失败'); 
+      }
+    }
+
+
+    function updateNavAuth() {
+      const user = JSON.parse(localStorage.getItem('user')||'{}');
+      const loginBtn = document.getElementById('navLoginBtn');
+      const logoutBtn = document.getElementById('navLogoutBtn');
+      const navUser = document.getElementById('navUser');
+      if(user.nickname) {
+        loginBtn.style.display = 'none';
+        logoutBtn.style.display = 'inline-block';
+        navUser.textContent = user.nickname + ' ';
+        navUser.style.color = 'var(--text-primary)';
+      }
+    }
+    function logout() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      location.reload();
+    }
+    updateNavAuth();
+
+</script>
+
+  <!-- Auth Modal -->
+  <div class="auth-modal-overlay" id="authModal" onclick="closeAuthModal(event)">
+    <div class="auth-modal" onclick="event.stopPropagation()">
+      <span class="auth-close" onclick="closeAuthModal()">&times;</span>
+      <h2 id="authTitle">登录</h2>
+      <input type="email" id="authEmail" placeholder="邮箱">
+      <input type="password" id="authPassword" placeholder="密码">
+      <input type="text" id="authNickname" placeholder="昵称" style="display:none;">
+      <button onclick="doAuth()" id="authBtn">登录</button>
+      <div class="auth-toggle">
+        <a onclick="toggleAuthMode()">没有账号？点击注册</a>
+      </div>
+    </div>
+  </div>
 </body>
 </html>

@@ -21,12 +21,34 @@ router.get('/posts/:id', (req, res) => {
   const comments = db.prepare('SELECT * FROM comments WHERE post_id = ?').all(req.params.id);
   const votes = db.prepare('SELECT * FROM votes WHERE post_id = ?').all(req.params.id);
   
-  res.json({ ...post, comments, votes });
+  // 整理投票数据
+  let voteData = null;
+  if (post.vote_enabled === 1 || post.vote_enabled === '1') {
+    const voteOptions = post.vote_options ? JSON.parse(post.vote_options) : ['同意', '不同意'];
+    const voteCounts = {};
+    const votedUsers = [];
+    
+    votes.forEach(v => {
+      const optIndex = parseInt(v.option);
+      voteCounts[optIndex] = (voteCounts[optIndex] || 0) + 1;
+      votedUsers.push(v.voter);
+    });
+    
+    voteData = {
+      enabled: true,
+      question: post.vote_question || '请投票',
+      options: voteOptions,
+      votes: voteCounts,
+      voted: votedUsers
+    };
+  }
+  
+  res.json({ ...post, comments, vote: voteData });
 });
 
 // 创建帖子
 router.post('/posts', (req, res) => {
-  const { type, title, content, author } = req.body;
+  const { type, title, content, author, vote_enabled, vote_question, vote_options } = req.body;
   
   if (!content || !author) {
     return res.status(400).json({ error: '缺少必要参数' });
@@ -36,9 +58,18 @@ router.post('/posts', (req, res) => {
   const id = uuidv4();
   
   db.prepare(`
-    INSERT INTO posts (id, type, title, content, author)
-    VALUES (?, ?, ?, ?, ?)
-  `).run(id, type || 'discussion', title || '', content, author);
+    INSERT INTO posts (id, type, title, content, author, vote_enabled, vote_question, vote_options)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+  `).run(
+    id, 
+    type || 'discussion', 
+    title || '', 
+    content, 
+    author,
+    vote_enabled ? 1 : 0,
+    vote_question || '',
+    vote_options ? JSON.stringify(vote_options) : null
+  );
 
   const post = db.prepare('SELECT * FROM posts WHERE id = ?').get(id);
   res.status(201).json(post);

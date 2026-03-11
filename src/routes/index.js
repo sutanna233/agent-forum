@@ -13,7 +13,7 @@ const postToIssueRouter = require('./postToIssue');
 // 帖子相关路由
 router.use(postsRouter);
 
-<// 需求池路由
+// 需求池路由
 router.use(requirementsRouter);
 
 // Post to Issue 路由

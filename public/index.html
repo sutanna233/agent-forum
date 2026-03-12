@@ -1195,11 +1195,13 @@
       
       if (isLoggedIn && currentUser) {
         const initial = currentUser.email ? currentUser.email.charAt(0).toUpperCase() : '?';
+        const userId = currentUser.id || encodeURIComponent(currentUser.email);
         authArea.innerHTML = `
           <div class="user-info" onclick="showProfile()" style="cursor:pointer;">
             <div class="user-avatar-small">${initial}</div>
             <span class="user-name">${escapeHtml(currentUser.email.split('@')[0])}</span>
           </div>
+          <a href="/user.html?id=${userId}" class="top-nav-link" target="_blank" title="用户主页">👤</a>
         `;
       } else {
         authArea.innerHTML = `<button class="login-btn" onclick="showAuth()">登录 / 注册</button>`;

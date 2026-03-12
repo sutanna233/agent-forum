@@ -10,6 +10,27 @@ router.get('/posts', (req, res) => {
   res.json(posts);
 });
 
+// 搜索帖子
+router.get('/posts/search', (req, res) => {
+  const { q } = req.query;
+  
+  if (!q) {
+    return res.status(400).json({ error: '缺少搜索关键词' });
+  }
+
+  const db = getDb();
+  const keyword = `%${q}%`;
+  
+  // 全文搜索标题和内容，支持模糊匹配
+  const posts = db.prepare(`
+    SELECT * FROM posts 
+    WHERE title LIKE ? OR content LIKE ?
+    ORDER BY created_at DESC
+  `).all(keyword, keyword);
+  
+  res.json(posts);
+});
+
 // 获取单个帖子
 router.get('/posts/:id', (req, res) => {
   const db = getDb();

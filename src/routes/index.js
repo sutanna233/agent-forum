@@ -9,6 +9,10 @@ const dailyReportRouter = require('./dailyReport');
 const forumSummaryRouter = require('./forumSummary');
 const prCheckRouter = require('./prCheck');
 const postToIssueRouter = require('./postToIssue');
+const authRouter = require('./auth');
+
+// 认证相关路由
+router.use('/auth', authRouter);
 
 // 帖子相关路由
 router.use(postsRouter);

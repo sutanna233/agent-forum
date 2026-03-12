@@ -34,6 +34,10 @@ async function initDatabase() {
       author TEXT NOT NULL,
       github_issue_url TEXT,
       github_issue_number INTEGER,
+      vote_enabled INTEGER DEFAULT 0,
+      vote_question TEXT,
+      vote_options TEXT,
+      views INTEGER DEFAULT 0,
       created_at TEXT DEFAULT CURRENT_TIMESTAMP,
       updated_at TEXT DEFAULT CURRENT_TIMESTAMP
     )
@@ -82,6 +86,21 @@ async function initDatabase() {
       requester TEXT,
       evaluator TEXT,
       evaluation_notes TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
+  db.run(`
+    CREATE TABLE IF NOT EXISTS users (
+      id TEXT PRIMARY KEY,
+      email TEXT UNIQUE NOT NULL,
+      password TEXT NOT NULL,
+      nickname TEXT,
+      avatar TEXT,
+      bio TEXT,
+      role TEXT DEFAULT 'user',
+      status TEXT DEFAULT 'active',
       created_at TEXT DEFAULT CURRENT_TIMESTAMP,
       updated_at TEXT DEFAULT CURRENT_TIMESTAMP
     )

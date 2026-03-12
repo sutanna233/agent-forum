@@ -239,6 +239,35 @@
       width: 15%;
     }
 
+    .post-table .col-actions {
+      width: 10%;
+      text-align: center;
+    }
+
+    .post-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+    }
+
+    .action-btn {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      padding: 4px 8px;
+      border-radius: 4px;
+      transition: background 0.2s;
+    }
+
+    .action-btn:hover {
+      background: var(--hover-bg);
+    }
+
+    .action-btn.delete:hover {
+      background: #fee;
+    }
+
     .post-title {
       color: var(--link-color);
       text-decoration: none;
@@ -712,246 +741,22 @@
       padding: 60px 20px;
       color: var(--text-secondary);
     }
+  
+  /* Auth Modal */
+  .auth-modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center; }
+  .auth-modal-overlay.active { display: flex; }
+  .auth-modal { background: var(--board-bg); border-radius: 12px; padding: 32px; width: 360px; box-shadow: 0 8px 32px rgba(0,0,0,0.2); }
+  .auth-modal h2 { margin: 0 0 24px; text-align: center; color: var(--text-primary); }
+  .auth-modal input { width: 100%; padding: 12px; margin-bottom: 16px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-color); color: var(--text-primary); box-sizing: border-box; }
+  .auth-modal button { width: 100%; padding: 12px; background: var(--primary-color); color: #fff; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; }
+  .auth-modal .auth-toggle { text-align: center; margin-top: 16px; }
+  .auth-modal .auth-toggle a { color: var(--link-color); cursor: pointer; }
+  .auth-close { position: absolute; right: 16px; top: 16px; font-size: 24px; cursor: pointer; color: var(--text-secondary); }
+  /* Auth button in nav */
+  .nav-auth-btn { background: transparent; border: 1px solid var(--border-color); color: var(--text-primary); padding: 6px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; }
+  .nav-auth-btn:hover { background: var(--hover-bg); }
 
-    /* 返回顶部按钮 */
-    .back-to-top {
-      position: fixed;
-      bottom: 30px;
-      right: 30px;
-      width: 50px;
-      height: 50px;
-      background: var(--primary-color);
-      color: white;
-      border: none;
-      border-radius: 50%;
-      cursor: pointer;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      font-size: 24px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-      transition: all 0.3s ease;
-      z-index: 999;
-    }
-
-    .back-to-top:hover {
-      background: var(--primary-dark);
-      transform: translateY(-3px);
-      box-shadow: 0 6px 16px rgba(0,0,0,0.3);
-    }
-
-    .back-to-top.visible {
-      display: flex;
-    }
-
-    /* 加载动画 */
-    .loading-spinner {
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      border: 3px solid var(--border-color);
-      border-top-color: var(--primary-color);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-      margin-right: 8px;
-      vertical-align: middle;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    /* 淡入动画 */
-    .fade-in {
-      animation: fadeIn 0.3s ease-in;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* 登录/注册样式 */
-    .auth-container {
-      max-width: 400px;
-      margin: 80px auto 20px;
-      background: var(--board-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      padding: 30px;
-    }
-
-    .auth-tabs {
-      display: flex;
-      margin-bottom: 25px;
-      border-bottom: 2px solid var(--border-color);
-    }
-
-    .auth-tab {
-      flex: 1;
-      padding: 12px;
-      background: none;
-      border: none;
-      font-size: 16px;
-      cursor: pointer;
-      color: var(--text-secondary);
-      transition: all 0.2s;
-    }
-
-    .auth-tab.active {
-      color: var(--primary-color);
-      border-bottom: 2px solid var(--primary-color);
-      margin-bottom: -2px;
-      font-weight: bold;
-    }
-
-    .auth-form .form-group {
-      margin-bottom: 20px;
-    }
-
-    .auth-form label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: bold;
-      color: var(--text-primary);
-    }
-
-    .auth-form input {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid var(--border-color);
-      border-radius: 4px;
-      background: var(--board-bg);
-      color: var(--text-primary);
-      font-size: 14px;
-    }
-
-    .auth-form input:focus {
-      outline: none;
-      border-color: var(--primary-color);
-    }
-
-    /* 个人资料样式 */
-    .profile-container {
-      max-width: 600px;
-      margin: 80px auto 20px;
-      background: var(--board-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      padding: 30px;
-    }
-
-    .profile-header {
-      display: flex;
-      align-items: center;
-      gap: 25px;
-      margin-bottom: 30px;
-      padding-bottom: 20px;
-      border-bottom: 1px solid var(--border-color);
-    }
-
-    .profile-avatar {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      background: var(--primary-color);
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 36px;
-      font-weight: bold;
-    }
-
-    .profile-info h2 {
-      margin-bottom: 8px;
-      color: var(--text-primary);
-    }
-
-    .profile-info p {
-      color: var(--text-secondary);
-      font-size: 14px;
-      margin: 4px 0;
-    }
-
-    .profile-stats {
-      display: flex;
-      gap: 40px;
-      margin-bottom: 30px;
-    }
-
-    .stat-item {
-      text-align: center;
-    }
-
-    .stat-value {
-      display: block;
-      font-size: 28px;
-      font-weight: bold;
-      color: var(--primary-color);
-    }
-
-    .stat-label {
-      color: var(--text-secondary);
-      font-size: 14px;
-    }
-
-    .profile-actions {
-      text-align: center;
-    }
-
-    .profile-actions button {
-      padding: 10px 30px;
-      background: #e74c3c;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 14px;
-    }
-
-    .profile-actions button:hover {
-      background: #c0392b;
-    }
-
-    /* 登录按钮 */
-    .login-btn {
-      background: var(--primary-color);
-      color: white;
-      border: none;
-      padding: 6px 16px;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 14px;
-    }
-
-    .login-btn:hover {
-      background: var(--primary-dark);
-    }
-
-    .user-info {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .user-avatar-small {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      background: var(--primary-color);
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
-    }
-
-    .user-name {
-      color: var(--text-primary);
-      font-weight: 500;
-    }
-  </style>
+</style>
 </head>
 <body>
   <!-- 顶部固定导航 -->
@@ -968,7 +773,9 @@
     </div>
     <div class="top-nav-right">
       <button class="theme-btn" onclick="toggleTheme()">🌙</button>
-      <span id="auth-area"></span>
+      <span id="navUser"></span>
+      <button class="nav-auth-btn" id="navLoginBtn" onclick="showAuthModal()">登录</button>
+      <button class="nav-auth-btn" id="navLogoutBtn" onclick="logout()" style="display:none;">登出</button>
     </div>
   </nav>
 
@@ -1001,6 +808,7 @@
               <th class="col-replies">回复</th>
               <th class="col-views">查看</th>
               <th class="col-time">发布时间</th>
+              <th class="col-actions">操作</th>
             </tr>
           </thead>
           <tbody id="posts-list">
@@ -1055,79 +863,6 @@
         </div>
       </div>
     </div>
-
-    <!-- 登录视图 -->
-    <div id="auth-view" style="display:none;">
-      <div class="auth-container">
-        <div class="auth-tabs">
-          <button class="auth-tab active" onclick="showAuthTab('login')">登录</button>
-          <button class="auth-tab" onclick="showAuthTab('register')">注册</button>
-        </div>
-        
-        <!-- 登录表单 -->
-        <div id="login-form" class="auth-form">
-          <div class="form-group">
-            <label>邮箱</label>
-            <input type="email" id="login-email" placeholder="请输入邮箱" required>
-          </div>
-          <div class="form-group">
-            <label>密码</label>
-            <input type="password" id="login-password" placeholder="请输入密码" required>
-          </div>
-          <div class="form-actions">
-            <button class="form-submit" onclick="doLogin()">登录</button>
-            <button class="form-cancel" onclick="goBack()">取消</button>
-          </div>
-        </div>
-        
-        <!-- 注册表单 -->
-        <div id="register-form" class="auth-form" style="display:none;">
-          <div class="form-group">
-            <label>邮箱</label>
-            <input type="email" id="register-email" placeholder="请输入邮箱" required>
-          </div>
-          <div class="form-group">
-            <label>密码</label>
-            <input type="password" id="register-password" placeholder="请输入密码 (至少6位)" required>
-          </div>
-          <div class="form-group">
-            <label>确认密码</label>
-            <input type="password" id="register-confirm" placeholder="请再次输入密码" required>
-          </div>
-          <div class="form-actions">
-            <button class="form-submit" onclick="doRegister()">注册</button>
-            <button class="form-cancel" onclick="goBack()">取消</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 个人资料视图 -->
-    <div id="profile-view" style="display:none;">
-      <div class="profile-container">
-        <div class="profile-header">
-          <div class="profile-avatar" id="profile-avatar">?</div>
-          <div class="profile-info">
-            <h2 id="profile-name">用户</h2>
-            <p id="profile-email">email@example.com</p>
-            <p id="profile-joined">注册时间: -</p>
-          </div>
-        </div>
-        <div class="profile-stats">
-          <div class="stat-item">
-            <span class="stat-value" id="profile-post-count">0</span>
-            <span class="stat-label">帖子</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value" id="profile-comment-count">0</span>
-            <span class="stat-label">回复</span>
-          </div>
-        </div>
-        <div class="profile-actions">
-          <button class="form-submit" onclick="logout()">退出登录</button>
-        </div>
-      </div>
-    </div>
   </div>
 
   <!-- 底部 -->
@@ -1139,10 +874,13 @@
   <script>
     let currentBoard = 'all';
     let currentPage = 1;
-    let previousView = 'home';
     let currentView = 'home';
+    let previousView = 'home';
+    let resolve = null;
+    let defaultVolumeMultiple = 1;
+    async function switchBoard(b){currentBoard=b;loadPosts();}
+    async function switchView(v){currentView=v;loadPosts();}
     const pageSize = 20;
-    let currentUser = null;
 
     // 初始化
     document.addEventListener('DOMContentLoaded', () => {
@@ -1154,235 +892,7 @@
         document.documentElement.setAttribute('data-theme', 'dark');
         document.querySelector('.theme-btn').textContent = '☀️';
       }
-      
-      // 检查登录状态
-      checkAuth();
     });
-
-    // 检查登录状态
-    async function checkAuth() {
-      const token = localStorage.getItem('auth_token');
-      const userJson = localStorage.getItem('user');
-      
-      if (token && userJson) {
-        try {
-          const user = JSON.parse(userJson);
-          const response = await fetch('/api/auth/me', {
-            headers: { 'Authorization': `Bearer ${token}` }
-          });
-          
-          if (response.ok) {
-            currentUser = await response.json();
-            updateAuthUI(true);
-          } else {
-            // token 失效，清除
-            localStorage.removeItem('auth_token');
-            localStorage.removeItem('user');
-            updateAuthUI(false);
-          }
-        } catch (e) {
-          console.error('Auth check failed:', e);
-          updateAuthUI(false);
-        }
-      } else {
-        updateAuthUI(false);
-      }
-    }
-
-    // 更新登录 UI
-    function updateAuthUI(isLoggedIn) {
-      const authArea = document.getElementById('auth-area');
-      
-      if (isLoggedIn && currentUser) {
-        const initial = currentUser.email ? currentUser.email.charAt(0).toUpperCase() : '?';
-        const userId = currentUser.id || encodeURIComponent(currentUser.email);
-        authArea.innerHTML = `
-          <div class="user-info" onclick="showProfile()" style="cursor:pointer;">
-            <div class="user-avatar-small">${initial}</div>
-            <span class="user-name">${escapeHtml(currentUser.email.split('@')[0])}</span>
-          </div>
-          <a href="/user.html?id=${userId}" class="top-nav-link" target="_blank" title="用户主页">👤</a>
-        `;
-      } else {
-        authArea.innerHTML = `<button class="login-btn" onclick="showAuth()">登录 / 注册</button>`;
-      }
-    }
-
-    // 显示登录/注册视图
-    function showAuth() {
-      previousView = currentView;
-      currentView = 'auth';
-      
-      document.getElementById('home-view').style.display = 'none';
-      document.getElementById('post-detail-view').style.display = 'none';
-      document.getElementById('create-post-view').style.display = 'none';
-      document.getElementById('auth-view').style.display = 'block';
-      document.getElementById('profile-view').style.display = 'none';
-      
-      showAuthTab('login');
-      
-      document.querySelectorAll('.top-nav-link').forEach(link => link.classList.remove('active'));
-    }
-
-    // 切换登录/注册标签
-    function showAuthTab(tab) {
-      document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
-      event.target.classList.add('active');
-      
-      if (tab === 'login') {
-        document.getElementById('login-form').style.display = 'block';
-        document.getElementById('register-form').style.display = 'none';
-      } else {
-        document.getElementById('login-form').style.display = 'none';
-        document.getElementById('register-form').style.display = 'block';
-      }
-    }
-
-    // 执行登录
-    async function doLogin() {
-      const email = document.getElementById('login-email').value.trim();
-      const password = document.getElementById('login-password').value;
-      
-      if (!email || !password) {
-        alert('请填写邮箱和密码');
-        return;
-      }
-      
-      try {
-        const response = await fetch('/api/auth/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password })
-        });
-        
-        const data = await response.json();
-        
-        if (response.ok) {
-          localStorage.setItem('auth_token', data.token);
-          localStorage.setItem('user', JSON.stringify(data.user));
-          currentUser = data.user;
-          updateAuthUI(true);
-          goBack();
-          alert('登录成功！');
-        } else {
-          alert(data.error || '登录失败');
-        }
-      } catch (e) {
-        console.error(e);
-        alert('登录失败，请稍后重试');
-      }
-    }
-
-    // 执行注册
-    async function doRegister() {
-      const email = document.getElementById('register-email').value.trim();
-      const password = document.getElementById('register-password').value;
-      const confirm = document.getElementById('register-confirm').value;
-      
-      if (!email || !password || !confirm) {
-        alert('请填写所有字段');
-        return;
-      }
-      
-      if (password.length < 6) {
-        alert('密码至少需要6位');
-        return;
-      }
-      
-      if (password !== confirm) {
-        alert('两次输入的密码不一致');
-        return;
-      }
-      
-      try {
-        const response = await fetch('/api/auth/register', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password })
-        });
-        
-        const data = await response.json();
-        
-        if (response.ok) {
-          localStorage.setItem('auth_token', data.token);
-          localStorage.setItem('user', JSON.stringify(data.user));
-          currentUser = data.user;
-          updateAuthUI(true);
-          goBack();
-          alert('注册成功！');
-        } else {
-          alert(data.error || '注册失败');
-        }
-      } catch (e) {
-        console.error(e);
-        alert('注册失败，请稍后重试');
-      }
-    }
-
-    // 显示个人资料
-    async function showProfile() {
-      if (!currentUser) {
-        showAuth();
-        return;
-      }
-      
-      previousView = currentView;
-      currentView = 'profile';
-      
-      document.getElementById('home-view').style.display = 'none';
-      document.getElementById('post-detail-view').style.display = 'none';
-      document.getElementById('create-post-view').style.display = 'none';
-      document.getElementById('auth-view').style.display = 'none';
-      document.getElementById('profile-view').style.display = 'block';
-      
-      // 更新资料内容
-      const initial = currentUser.email ? currentUser.email.charAt(0).toUpperCase() : '?';
-      document.getElementById('profile-avatar').textContent = initial;
-      document.getElementById('profile-name').textContent = currentUser.email.split('@')[0];
-      document.getElementById('profile-email').textContent = currentUser.email;
-      document.getElementById('profile-joined').textContent = '注册时间: ' + (currentUser.created_at ? new Date(currentUser.created_at).toLocaleDateString('zh-CN') : '未知');
-      
-      // 加载用户的帖子统计
-      try {
-        const token = localStorage.getItem('auth_token');
-        const response = await fetch('/api/posts');
-        const posts = await response.json();
-        const userPosts = posts.filter(p => p.author === currentUser.email);
-        
-        document.getElementById('profile-post-count').textContent = userPosts.length;
-        
-        // 计算回复数
-        let commentCount = 0;
-        for (const post of userPosts) {
-          commentCount += (post.comments?.length || 0);
-        }
-        document.getElementById('profile-comment-count').textContent = commentCount;
-      } catch (e) {
-        console.error(e);
-      }
-      
-      document.querySelectorAll('.top-nav-link').forEach(link => link.classList.remove('active'));
-    }
-
-    // 退出登录
-    function logout() {
-      localStorage.removeItem('auth_token');
-      localStorage.removeItem('user');
-      currentUser = null;
-      updateAuthUI(false);
-      goHome();
-      alert('已退出登录');
-    }
-
-    // 获取当前用户信息
-    function getCurrentUser() {
-      return currentUser;
-    }
-
-    // 检查是否已登录
-    function isLoggedIn() {
-      return !!currentUser;
-    }
 
     // 切换视图
     function switchView(view) {
@@ -1392,8 +902,6 @@
       document.getElementById('home-view').style.display = view === 'home' ? 'block' : 'none';
       document.getElementById('post-detail-view').style.display = view === 'post-detail' ? 'block' : 'none';
       document.getElementById('create-post-view').style.display = view === 'create-post' ? 'block' : 'none';
-      document.getElementById('auth-view').style.display = view === 'auth' ? 'block' : 'none';
-      document.getElementById('profile-view').style.display = view === 'profile' ? 'block' : 'none';
       
       document.querySelectorAll('.top-nav-link').forEach(link => {
         link.classList.remove('active');
@@ -1426,8 +934,6 @@
     function goBack() {
       if (previousView === 'post-detail') {
         loadPosts();
-        switchView('home');
-      } else if (previousView === 'auth' || previousView === 'profile') {
         switchView('home');
       } else {
         switchView(previousView || 'home');
@@ -1479,28 +985,26 @@
         const pagePosts = filteredPosts.slice(start, end);
         
         if (pagePosts.length === 0) {
-          container.innerHTML = '<tr><td colspan="5" class="empty">暂无帖子</td></tr>';
+          container.innerHTML = '<tr><td colspan="6" class="empty">暂无帖子</td></tr>';
         } else {
+          const currentUser = localStorage.getItem('username') || '';
           container.innerHTML = pagePosts.map(post => `
             <tr>
               <td>
-                <a class="post-title" data-id="${post.id}" href="javascript:void(0)">${escapeHtml(post.title || '无标题')}</a>
+                <a class="post-title" onclick="viewPost('${post.id}')">${escapeHtml(post.title || '无标题')}</a>
               </td>
               <td><span class="post-author">${escapeHtml(post.author)}</span></td>
               <td class="post-stats">${post.comments?.length || 0}</td>
               <td class="post-stats">${post.views || 0}</td>
               <td class="post-time">${formatTime(post.created_at)}</td>
+              <td class="post-actions">
+                ${post.author === currentUser || currentUser === 'admin' ? `
+                  <button class="action-btn edit" onclick="editPost('${post.id}')" title="编辑">✏️</button>
+                  <button class="action-btn delete" onclick="deletePost('${post.id}')" title="删除">🗑️</button>
+                ` : ''}
+              </td>
             </tr>
           `).join('');
-          
-          // 绑定点击事件
-          container.querySelectorAll('.post-title').forEach(link => {
-            link.addEventListener('click', function(e) {
-              e.preventDefault();
-              const id = this.getAttribute('data-id');
-              viewPost(id);
-            });
-          });
         }
         
         // 生成分页
@@ -1547,19 +1051,10 @@
     // 查看帖子详情
     async function viewPost(id) {
       previousView = 'home';
-      console.log('viewPost called with id:', id);
       
       try {
         const response = await fetch('/api/posts/' + id);
-        
-        if (!response.ok) {
-          const error = await response.json();
-          alert(error.error || '加载失败');
-          return;
-        }
-        
         const post = await response.json();
-        console.log('Post loaded:', post);
         
         const container = document.getElementById('post-detail-content');
         
@@ -1654,7 +1149,7 @@
         await fetch('/api/posts/' + postId + '/comments', {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({content, author: '苏丹娜'})
+          body: JSON.stringify({content, author: (JSON.parse(localStorage.getItem('user')||'{}').nickname||'匿名')})
         });
         document.getElementById('reply-content').value = '';
         viewPost(postId);
@@ -1681,7 +1176,7 @@
             type: currentBoard === 'all' ? 'tech' : currentBoard,
             title,
             content,
-            author: '苏丹娜'
+            author: (JSON.parse(localStorage.getItem('user')||'{}').nickname||'匿名')
           })
         });
         document.getElementById('quick-title').value = '';
@@ -1697,15 +1192,8 @@
       switchView('create-post');
     }
 
-    // 创建帖子
+    // 创建/编辑帖子
     async function createPost() {
-      // 检查登录状态
-      if (!currentUser) {
-        alert('请先登录');
-        showAuth();
-        return;
-      }
-      
       const board = document.getElementById('post-board').value;
       const title = document.getElementById('post-title').value.trim();
       const content = document.getElementById('post-content').value.trim();
@@ -1715,22 +1203,31 @@
         return;
       }
       
+      const author = JSON.parse(localStorage.getItem('user')||'{}').nickname || '匿名';
+      
       try {
-        const token = localStorage.getItem('auth_token');
-        await fetch('/api/posts', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': token ? `Bearer ${token}` : ''
-          },
-          body: JSON.stringify({type: board, title, content, author: currentUser.email})
-        });
+        if (window.editingPostId) {
+          // 编辑模式
+          await fetch('/api/posts/' + window.editingPostId, {
+            method: 'PUT',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({type: board, title, content, author})
+          });
+          window.editingPostId = null;
+        } else {
+          // 创建模式
+          await fetch('/api/posts', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({type: board, title, content, author})
+          });
+        }
         document.getElementById('post-title').value = '';
         document.getElementById('post-content').value = '';
         loadPosts();
         switchView('home');
       } catch (error) {
-        alert('发布失败');
+        alert('操作失败');
       }
     }
 
@@ -1859,45 +1356,87 @@
     }
 
     // 编辑帖子
-    function editPost(post) {
-      document.getElementById('post-board').value = post.type || post.board || 'tech';
-      document.getElementById('post-title').value = post.title || '';
-      document.getElementById('post-content').value = post.content || '';
-      switchView('create-post');
+    async function editPost(postId) {
+      try {
+        const response = await fetch('/api/posts/' + postId);
+        const post = await response.json();
+        document.getElementById('post-board').value = post.type || post.board || 'tech';
+        document.getElementById('post-title').value = post.title || '';
+        document.getElementById('post-content').value = post.content || '';
+        // 保存要编辑的帖子ID
+        window.editingPostId = postId;
+        switchView('create-post');
+      } catch (error) {
+        alert('获取帖子失败');
+      }
+    }
+  
+    // Auth
+    let isLoginMode = true;
+    function showAuthModal() { document.getElementById('authModal').classList.add('active'); }
+    function closeAuthModal(e) { if(e&&e.target!==e.currentTarget)return; document.getElementById('authModal').classList.remove('active'); }
+    function toggleAuthMode() { 
+      isLoginMode = !isLoginMode; 
+      document.getElementById('authTitle').textContent = isLoginMode ? '登录' : '注册'; 
+      document.getElementById('authNickname').style.display = isLoginMode ? 'none' : 'block'; 
+      document.getElementById('authBtn').textContent = isLoginMode ? '登录' : '注册';
+      document.querySelector('.auth-toggle').innerHTML = isLoginMode ? '<a onclick="toggleAuthMode()">没有账号？点击注册</a>' : '<a onclick="toggleAuthMode()">已有账号？点击登录</a>';
+    }
+    async function doAuth() {
+      const email = document.getElementById('authEmail').value;
+      const password = document.getElementById('authPassword').value;
+      const nickname = document.getElementById('authNickname').value;
+      if(!email||!password) { alert('请填写完整'); return; }
+      const endpoint = isLoginMode ? '/api/auth/login' : '/api/auth/register';
+      const body = isLoginMode ? {email, password} : {email, password, nickname};
+      const res = await fetch(endpoint, {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body)});
+      const data = await res.json();
+      if(data.token) { 
+        localStorage.setItem('token', data.token); 
+        localStorage.setItem('user', JSON.stringify(data.user)); 
+        closeAuthModal();
+        alert('登录成功！');
+        location.reload();
+      } else { 
+        alert(data.error || '失败'); 
+      }
     }
 
-    // 返回顶部按钮
-    const backToTopBtn = document.createElement('button');
-    backToTopBtn.className = 'back-to-top';
-    backToTopBtn.innerHTML = '↑';
-    backToTopBtn.title = '返回顶部';
-    document.body.appendChild(backToTopBtn);
 
-    // 监听滚动显示/隐藏返回顶部按钮
-    window.addEventListener('scroll', function() {
-      if (window.scrollY > 300) {
-        backToTopBtn.classList.add('visible');
-      } else {
-        backToTopBtn.classList.remove('visible');
+    function updateNavAuth() {
+      const user = JSON.parse(localStorage.getItem('user')||'{}');
+      const loginBtn = document.getElementById('navLoginBtn');
+      const logoutBtn = document.getElementById('navLogoutBtn');
+      const navUser = document.getElementById('navUser');
+      if(user.nickname) {
+        loginBtn.style.display = 'none';
+        logoutBtn.style.display = 'inline-block';
+        navUser.textContent = user.nickname + ' ';
+        navUser.style.color = 'var(--text-primary)';
       }
-    });
+    }
+    function logout() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      location.reload();
+    }
+    updateNavAuth();
 
-    // 点击返回顶部
-    backToTopBtn.addEventListener('click', function() {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
+</script>
 
-    // 页面加载完成后显示加载动画
-    document.addEventListener('DOMContentLoaded', function() {
-      // 为帖子列表添加淡入效果
-      const postsTable = document.querySelector('.post-table-container');
-      if (postsTable) {
-        postsTable.classList.add('fade-in');
-      }
-    });
-  </script>
-
-  <!-- 返回顶部按钮 -->
-  <button class="back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" title="返回顶部">↑</button>
+  <!-- Auth Modal -->
+  <div class="auth-modal-overlay" id="authModal" onclick="closeAuthModal(event)">
+    <div class="auth-modal" onclick="event.stopPropagation()">
+      <span class="auth-close" onclick="closeAuthModal()">&times;</span>
+      <h2 id="authTitle">登录</h2>
+      <input type="email" id="authEmail" placeholder="邮箱">
+      <input type="password" id="authPassword" placeholder="密码">
+      <input type="text" id="authNickname" placeholder="昵称" style="display:none;">
+      <button onclick="doAuth()" id="authBtn">登录</button>
+      <div class="auth-toggle">
+        <a onclick="toggleAuthMode()">没有账号？点击注册</a>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
